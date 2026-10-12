@@ -8,7 +8,7 @@ def read_root():
     return {"message": "it works !"}
 
 
-<<<<<<< main.py
+
 
 
 def get_ip_address():
@@ -29,6 +29,6 @@ def greeting(name: str):
         "developer": "Dev2",
         "hostname": socket.gethostname(),
         "IP": get_ip_address()
-=======
+
 
     }

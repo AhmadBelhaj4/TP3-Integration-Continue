@@ -1,0 +1,442 @@
+\documentclass[a4paper,12pt]{article}
+
+% --- Packages essentiels ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{tcolorbox}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+
+% --- Couleurs personnalisées ---
+\definecolor{primary}{RGB}{30, 60, 114}
+\definecolor{secondary}{RGB}{42, 82, 152}
+\definecolor{accent}{RGB}{235, 87, 87}
+\definecolor{darkgray}{RGB}{50, 50, 50}
+\definecolor{codebg}{RGB}{245, 247, 250}
+\definecolor{codeframe}{RGB}{210, 215, 225}
+
+% --- Configuration des liens ---
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primary,
+    filecolor=secondary,      
+    urlcolor=primary,
+    pdftitle={Rapport TP 2 DevOps - Travail collaboratif avec GitLab},
+    pdfpagemode=FullScreen,
+}
+
+% --- Configuration des listings de code ---
+\lstset{
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\small,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    commentstyle=\color{gray},
+    frame=single,
+    rulecolor=\color{codeframe},
+    keepspaces=true,
+    keywordstyle=\color{primary}\bfseries,
+    language=Python,
+    numbers=left,
+    numbersep=8pt,
+    numberstyle=\tiny\color{gray},
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    stringstyle=\color{accent},
+    tabsize=4
+}
+
+% --- En-têtes et pieds de page ---
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\color{gray}\small TP 2 : Travail Collaboratif avec GitLab}
+\lhead{\color{gray}\small DevOps - FastAPI}
+\cfoot{\thepage}
+
+\begin{document}
+
+% ==============================================================================
+% PAGE DE GARDE
+% ==============================================================================
+\begin{titlepage}
+    \centering
+    \vspace*{1cm}
+    
+    {\Huge \textbf{RAPPORT DE TRAVAIL PRATIQUE}}\\[0.4cm]
+    {\LARGE \textbf{TP 2 : Travail Collaboratif avec GitLab}}\\[0.2cm]
+    {\large \textbf{Intégration Continue \& Plateforme Collaborative (DevOps)}}\\[1.5cm]
+    
+    \rule{\linewidth}{0.5mm}\\[0.4cm]
+    {\LARGE \textbf{Développement et Fusion d'une API REST FastAPI en Équipe}}\\[0.2cm]
+    \rule{\linewidth}{0.5mm}\\[2cm]
+
+    \begin{minipage}{0.48\textwidth}
+        \textbf{\large Membres du Groupe :}\\[0.3cm]
+        \begin{itemize}
+            \item \textbf{Leader :} Mohsen BELLAAJ
+            \item \textbf{Dev 1 :} Yessin
+            \item \textbf{Dev 2 :} Ahmed
+        \end{itemize}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \textbf{\large Cadre Pédagogique :}\\[0.3cm]
+        \textbf{Responsable de cours :} Bassem BOUAZIZ\\
+        \textbf{Enseignante de TP :} Siwar CHAABENE\\
+        \textbf{Auditoires :} D-INFO / D-IITWM\\
+        \textbf{Année Universitaire :} 2026-2027
+    \end{minipage}
+
+    \vfill
+    {\large \today}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ==============================================================================
+% 1. INTRODUCTION & OBJECTIFS
+% ==============================================================================
+\section{Introduction et Objectifs du TP}
+
+Le présent travail pratique s'inscrit dans le cadre du module \textbf{Plateforme collaborative et intégration continue (DevOps)}. L'objectif principal est de mettre en application les pratiques modernes d'ingénierie logicielle collaborative en utilisant \textbf{Git} et \textbf{GitLab}, tout en concevant une API REST de référence avec le framework moderne \textbf{FastAPI}.
+
+\subsection{Objectifs pédagogiques et techniques}
+\begin{itemize}
+    \item \textbf{Architecture logicielle} : Développer un service web RESTful modulaire et léger avec Python et FastAPI.
+    \item \textbf{Gestion des versions et branches} : Mettre en œuvre le modèle de branchement Git (Git Feature Branch Workflow) avec la branche principale \texttt{main} et des branches de fonctionnalités isolées.
+    \item \textbf{Revue de code et intégration continue} : Utiliser les Merge Requests (MR) sur GitLab pour assurer la validation croisée des ajouts de code.
+    \item \textbf{Gestion des conflits} : Détecter, comprendre et résoudre méthodiquement les conflits de fusion survenant lors de développements concurrents sur le même fichier source.
+    \item \textbf{Livraison logicielle} : Étiqueter les versions stables via le système de tags Git (\texttt{v0.2}).
+\end{itemize}
+
+% ==============================================================================
+% 2. ORGANISATION DE L'ÉQUIPE ET RÔLES
+% ==============================================================================
+\section{Organisation de l'Équipe et Répartition des Rôles}
+
+Conformément aux instructions du TP, la répartition des rôles a été établie sur la base de l'ordre alphabétique des prénoms des membres du groupe :
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|l|l|p{8.5cm}|}
+\hline
+\textbf{Rôle} & \textbf{Étudiant} & \textbf{Responsabilités et Tâches Principales} \\
+\hline
+\textbf{Leader} & \textbf{Mohsen} & 
+\begin{itemize}
+    \item Création et configuration du projet GitLab.
+    \item Gestion des droits et des invitations des membres.
+    \item Initialisation du socle FastAPI sur la branche \texttt{main}.
+    \item Revue et approbation des Merge Requests.
+    \item Supervision de la résolution de conflits et pose du tag de version.
+\end{itemize} \\
+\hline
+\textbf{Dev 1} & \textbf{Yessin} & 
+\begin{itemize}
+    \item Clonage et configuration de l'environnement de développement.
+    \item Création de la branche \texttt{feature/addition}.
+    \item Implémentation du endpoint \texttt{GET /addition}.
+    \item Soumission de la Merge Request 1 vers \texttt{main}.
+\end{itemize} \\
+\hline
+\textbf{Dev 2} & \textbf{Ahmed} & 
+\begin{itemize}
+    \item Clonage et configuration de l'environnement de développement.
+    \item Création de la branche \texttt{feature/greeting}.
+    \item Implémentation du endpoint \texttt{GET /greeting} (avec Hostname \& IP).
+    \item Soumission de la Merge Request 2 et collaboration sur le conflit.
+\end{itemize} \\
+\hline
+\end{tabular}
+\caption{Répartition des responsabilités au sein de l'équipe}
+\end{table}
+
+% ==============================================================================
+% 3. DÉROULEMENT DÉTAILLÉ DES ÉTAPES DU TP
+% ==============================================================================
+\section{Déroulement Détaillé des Étapes Réalisées}
+
+\subsection{Étape 1 : Création du projet GitLab et Attribution des Rôles}
+\textbf{Intervenant :} Leader (Mohsen) avec l'assistance de Dev 1 (Yessin) et Dev 2 (Ahmed).
+
+\begin{enumerate}
+    \item Création d'un nouveau projet public/privé sur GitLab intitulé \texttt{tp2-fastapi-team} (ou \texttt{TP2-DEV}).
+    \item Accès au menu \textit{Manage $\rightarrow$ Members $\rightarrow$ Invite members}.
+    \item Ajout de \textbf{Yessin} (Dev 1) et \textbf{Ahmed} (Dev 2) avec le rôle \textbf{Developer}, leur conférant les droits de création de branches et de push sur leurs branches dédiées.
+\end{enumerate}
+
+\subsection{Étape 2 : Vérification et Validation des Accès}
+\textbf{Intervenants :} Dev 1 (Yessin) et Dev 2 (Ahmed).
+
+Les développeurs ont vérifié la réception de l'e-mail de confirmation d'invitation envoyé par GitLab et ont validé leur accès au tableau de bord du projet avec les privilèges \textit{Developer}.
+
+\subsection{Étape 3 : Clonage et Configuration de l'Environnement de Développement}
+\textbf{Intervenants :} Tous les membres de l'équipe.
+
+\begin{enumerate}
+    \item \textbf{Génération du Personal Access Token (PAT)} : Chaque développeur a configuré son jeton d'accès sécurisé dans les préférences GitLab (\textit{Settings $\rightarrow$ Access Tokens}) avec les permissions \texttt{read\_repository} et \texttt{write\_repository}.
+    \item \textbf{Clonage du dépôt} :
+\begin{lstlisting}[language=bash]
+git clone https://gitlab.com/bellajmohsen7/tp2-fastapi-team.git
+cd tp2-fastapi-team
+\end{lstlisting}
+    \item \textbf{Création de l'environnement virtuel local} :
+\begin{lstlisting}[language=bash]
+python -m venv .venv
+# Activation sous Windows PowerShell :
+.venv\Scripts\activate
+\end{lstlisting}
+    \item \textbf{Installation des dépendances fondamentales} :
+\begin{lstlisting}[language=bash]
+pip install fastapi uvicorn
+\end{lstlisting}
+    \item \textbf{Création du fichier \texttt{.gitignore}} pour exclure l'environnement virtuel et les caches :
+\begin{lstlisting}[language=bash]
+.venv/
+__pycache__/
+*.pyc
+\end{lstlisting}
+\end{enumerate}
+
+\subsection{Étape 4 : Développement du Socle Applicatif sur \texttt{main} (Commit A)}
+\textbf{Intervenant :} Leader (Mohsen).
+
+Le leader a implémenté la structure initiale de l'application dans le fichier \texttt{main.py} :
+\begin{lstlisting}[language=Python]
+from fastapi import FastAPI
+
+app = FastAPI(title="TP2 FastAPI App")
+
+@app.get("/")
+def read_root():
+    return {"message": "it works !"}
+\end{lstlisting}
+
+Il a également rédigé le fichier \texttt{README.md} détaillant :
+\begin{itemize}
+    \item La procédure d'installation et d'activation de l'environnement.
+    \item La commande d'exécution du serveur : \texttt{uvicorn main:app --reload}.
+    \item Les modalités de test via navigateur (\url{http://localhost:8000/}) et via la documentation Swagger (\url{http://localhost:8000/docs}).
+\end{itemize}
+
+Enfin, le leader a validé et poussé ces ajouts sur la branche centrale :
+\begin{lstlisting}[language=bash]
+git add .
+git commit -m "feat: implement GET / endpoint and update README"
+git push origin main
+\end{lstlisting}
+
+\subsection{Étape 5 : Récupération et Validation par les Développeurs}
+\textbf{Intervenants :} Dev 1 (Yessin) et Dev 2 (Ahmed).
+
+Les deux développeurs ont synchronisé leur copie locale avec la branche distante :
+\begin{lstlisting}[language=bash]
+git pull origin main
+uvicorn main:app --reload
+\end{lstlisting}
+Le test local sur \url{http://localhost:8000/} a confirmé le bon fonctionnement de l'endpoint racine renvoyant \texttt{\{"message": "it works !"\}}.
+
+\subsection{Étape 6 : Travail Parallèle sur les Branches de Fonctionnalités}
+
+\subsubsection{Travail de Dev 1 (Yessin) : Branche \texttt{feature/addition}}
+Yessin a créé sa branche isolée, développé la route d'addition et partagé son travail :
+\begin{enumerate}
+    \item Création de la branche :
+\begin{lstlisting}[language=bash]
+git checkout -b feature/addition
+\end{lstlisting}
+    \item Ajout du code dans \texttt{main.py} :
+\begin{lstlisting}[language=Python]
+@app.get("/addition")
+def addition(a: int, b: int):
+    return {
+        "result a+b": a + b,
+        "developer": "Yessin"
+    }
+\end{lstlisting}
+    \item Validation locale sur \url{http://localhost:8000/addition?a=3&b=7} renvoyant :
+\begin{lstlisting}[language=json]
+{
+  "result a+b": 10,
+  "developer": "Yessin"
+}
+\end{lstlisting}
+    \item Commit, push et création de la Merge Request (MR 1) vers \texttt{main} :
+\begin{lstlisting}[language=bash]
+git add main.py
+git commit -m "add addition endpoint"
+git push origin feature/addition
+\end{lstlisting}
+\end{enumerate}
+
+\subsubsection{Travail de Dev 2 (Ahmed) : Branche \texttt{feature/greeting}}
+Simultanément, Ahmed est parti de la branche \texttt{main} pour créer sa fonctionnalité :
+\begin{enumerate}
+    \item Création de la branche :
+\begin{lstlisting}[language=bash]
+git checkout main
+git checkout -b feature/greeting
+\end{lstlisting}
+    \item Implémentation dans \texttt{main.py} de la route \texttt{/greeting} avec capture dynamique du nom d'hôte et de l'adresse IP via le module standard \texttt{socket} :
+\begin{lstlisting}[language=Python]
+import socket
+
+def get_ip_address():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+    except Exception:
+        ip = "127.0.0.1"
+    finally:
+        s.close()
+    return ip
+
+@app.get("/greeting")
+def greeting(name: str):
+    return {
+        "message": f"Hello, {name}",
+        "developer": "Ahmed",
+        "hostname": socket.gethostname(),
+        "IP": get_ip_address()
+    }
+\end{lstlisting}
+    \item Validation locale sur \url{http://localhost:8000/greeting?name=Prof}.
+    \item Commit, push et ouverture de la Merge Request (MR 2) vers \texttt{main} :
+\begin{lstlisting}[language=bash]
+git add main.py
+git commit -m "add greeting endpoint"
+git push origin feature/greeting
+\end{lstlisting}
+\end{enumerate}
+
+\subsection{Étape 7 : Revue et Fusion de la MR de Dev 1 (Merge 1)}
+\textbf{Intervenant :} Leader (Mohsen).
+
+\begin{enumerate}
+    \item Ouverture de la Merge Request 1 (\texttt{feature/addition} $\rightarrow$ \texttt{main}).
+    \item Revue du code dans l'onglet \textit{Changes}.
+    \item Approbation (\textit{Approve}) et exécution de la fusion (\textit{Merge}) avec suppression automatique de la branche distante.
+\end{enumerate}
+
+\begin{tcolorbox}[colback=blue!5!white,colframe=primary,title=\textbf{Réponse à la Question : Interpréter le Merge 1}]
+La fusion de la branche \texttt{feature/addition} s'est effectuée de façon fluide et \textbf{sans aucun conflit}.\\
+\textbf{Explication :} Depuis le moment où Yessin (Dev 1) a tiré sa branche à partir de \texttt{main}, aucun commit supplémentaire n'a été inséré sur la branche principale \texttt{main}. L'historique Git était donc direct et linéaire. Git a pu appliquer la modification sans ambiguïté (Fast-Forward ou Merge commit automatique).
+\end{tcolorbox}
+
+\subsection{Étape 8 : Revue de la MR de Dev 2 et Résolution du Conflit (Merge 2)}
+\textbf{Intervenants :} Leader (Mohsen), Dev 2 (Ahmed) et Dev 1 (Yessin).
+
+À l'ouverture de la MR 2 soumise par Ahmed, GitLab affiche un blocage majeur :
+\begin{center}
+\textbf{\color{accent}\fbox{Merge blocked: Merge conflicts must be resolved}}
+\end{center}
+
+\begin{tcolorbox}[colback=red!5!white,colframe=accent,title=\textbf{Réponse à la Question : Interpréter le Conflit}]
+\textbf{Explication du conflit :} Yessin (Dev 1) et Ahmed (Dev 2) ont tous les deux dérivé leurs branches respectives de la même version originale de \texttt{main}.\\
+Entre-temps, la MR 1 de Dev 1 a été fusionnée dans \texttt{main}, introduisant de nouvelles lignes dans \texttt{main.py}.\\
+Lorsque Dev 2 tente de fusionner sa branche, Git constate que le même fichier (\texttt{main.py}) a subi des modifications divergentes aux mêmes emplacements de lignes. Ne pouvant deviner s'il faut conserver l'addition, le greeting ou les deux, Git suspend l'intégration et délègue l'arbitrage à l'équipe.
+\end{tcolorbox}
+
+\subsubsection{Procédure de Résolution du Conflit par l'Équipe}
+La résolution a été opérée en local avec rigueur :
+\begin{enumerate}
+    \item Récupération des dernières modifications de \texttt{main} sur la branche \texttt{feature/greeting} :
+\begin{lstlisting}[language=bash]
+git checkout feature/greeting
+git pull origin main
+\end{lstlisting}
+    \item Analyse des délimiteurs de conflit dans \texttt{main.py} :
+\begin{lstlisting}[language=Python]
+<<<<<<< HEAD (Version d'Ahmed - greeting)
+@app.get("/greeting")
+def greeting(name: str):
+...
+=======
+@app.get("/addition")
+def addition(a: int, b: int):
+...
+>>>>>>> main (Version de Yessin - addition)
+\end{lstlisting}
+    \item \textbf{Arbitrage} : Nettoyage manuel des marqueurs pour intégrer \textbf{l'ensemble des deux fonctionnalités} dans le fichier final consolidé :
+\begin{lstlisting}[language=Python]
+import socket
+from fastapi import FastAPI
+
+app = FastAPI(title="TP2 FastAPI App")
+
+def get_ip_address():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+    except Exception:
+        ip = "127.0.0.1"
+    finally:
+        s.close()
+    return ip
+
+@app.get("/")
+def read_root():
+    return {"message": "it works !"}
+
+@app.get("/addition")
+def addition(a: int, b: int):
+    return {
+        "result a+b": a + b,
+        "developer": "Yessin"
+    }
+
+@app.get("/greeting")
+def greeting(name: str):
+    return {
+        "message": f"Hello, {name}",
+        "developer": "Ahmed",
+        "hostname": socket.gethostname(),
+        "IP": get_ip_address()
+    }
+\end{lstlisting}
+    \item Validation et publication du correctif de fusion :
+\begin{lstlisting}[language=bash]
+git add main.py
+git commit -m "fix: resolve merge conflict between addition and greeting"
+git push origin feature/greeting
+\end{lstlisting}
+    \item Le statut sur GitLab bascule instantanément au vert. Mohsen (Leader) valide le merge final sur la branche \texttt{main}.
+\end{enumerate}
+
+\subsection{Étape Finale : Étiquetage de Version (Tag v0.2)}
+\textbf{Intervenant :} Leader (Mohsen).
+
+Après validation complète des trois routes de l'API en production locale, la version de release a été officialisée par la création d'un tag Git :
+\begin{lstlisting}[language=bash]
+git checkout main
+git pull origin main
+git tag -a v0.2 -m "Release version 0.2: Consolidated API with addition and greeting endpoints"
+git push origin v0.2
+\end{lstlisting}
+
+% ==============================================================================
+% 4. BILAN TECHNIQUE ET SYNTHÈSE
+% ==============================================================================
+\section{Bilan Technique et Bonnes Pratiques DevOps}
+
+Ce travail pratique a permis de mettre en lumière des concepts clés de la collaboration logicielle moderne :
+\begin{enumerate}
+    \item \textbf{Isolation des développements} : L'utilisation systématique de branches dédiées (\texttt{feature/*}) préserve la stabilité de la branche principale \texttt{main}.
+    \item \textbf{Revue par les pairs (Code Review)} : Les Merge Requests ne sont pas de simples outils de fusion, mais des garde-fous garantissant la qualité du code avant intégration.
+    \item \textbf{Gestion saine des conflits} : Les conflits Git font partie intégrante de la vie d'un projet d'équipe ; leur résolution méthodique en équipe renforce la cohésion et la compréhension globale de la base de code.
+    \item \textbf{Traçabilité par les tags} : L'étiquetage sémantique (\texttt{v0.2}) pose les fondations des déclencheurs de déploiement continu (CD) qui seront explorés dans les prochains TPs.
+\end{enumerate}
+
+\end{document}
