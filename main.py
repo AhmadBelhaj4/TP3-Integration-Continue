@@ -39,10 +39,10 @@ def addition(a: int, b: int):
         "developer": "Dev1"
     }
 
-
 class OperationInput(BaseModel):
     a: float
     b: float
+
 
 
 @app.post("/divide")
@@ -53,3 +53,11 @@ def divide(data: OperationInput):
             detail="Erreur: Division par zero impossible."
         )
     return {"result": data.a / data.b, "developer": "Dev2"}
+
+@app.post("/multiply")
+def multiply(data: OperationInput):
+    return {
+        "result": data.a * data.b,
+        "developer": "Dev1"
+    }
+
