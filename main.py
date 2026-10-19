@@ -61,3 +61,22 @@ def multiply(data: OperationInput):
         "developer": "Dev1"
     }
 
+items_db = {
+    1: "Serveur",
+    2: "Base de donnees",
+    3: "Routeur"
+}
+@app.delete("/remove/{id}")
+def remove_item(id: int):
+    if id not in items_db:
+        raise HTTPException(
+            status_code=404,
+            detail="Element non trouve"
+        )
+
+    deleted = items_db.pop(id)
+
+    return {
+        "message": f"Element {id} ({deleted}) supprime",
+        "developer": "Dev1"
+    }
