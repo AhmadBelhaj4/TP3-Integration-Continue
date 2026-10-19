@@ -1,14 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 import socket
+
 app = FastAPI(title="TP2 FastAPI App")
 
 
 @app.get("/")
 def read_root():
     return {"message": "it works !"}
-
-
-
 
 
 def get_ip_address():
@@ -22,6 +21,7 @@ def get_ip_address():
         s.close()
     return ip
 
+
 @app.get("/greeting")
 def greeting(name: str):
     return {
@@ -29,12 +29,27 @@ def greeting(name: str):
         "developer": "Dev2",
         "hostname": socket.gethostname(),
         "IP": get_ip_address()
-
-
     }
+
+
 @app.get("/addition")
 def addition(a: int, b: int):
     return {
         "result a+b": a + b,
         "developer": "Dev1"
     }
+
+
+class OperationInput(BaseModel):
+    a: float
+    b: float
+
+
+@app.post("/divide")
+def divide(data: OperationInput):
+    if data.b == 0:
+        raise HTTPException(
+            status_code=400,
+            detail="Erreur: Division par zero impossible."
+        )
+    return {"result": data.a / data.b, "developer": "Dev2"}
