@@ -38,3 +38,15 @@ def addition(a: int, b: int):
         "result a+b": a + b,
         "developer": "Dev1"
     }
+from pydantic import BaseModel
+
+class OperationInput(BaseModel):
+    a: float
+    b: float
+
+@app.post("/multiply")
+def multiply(data: OperationInput):
+    return {
+        "result": data.a * data.b,
+        "developer": "Dev1"
+    }
