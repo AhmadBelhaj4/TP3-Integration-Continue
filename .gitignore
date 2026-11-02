@@ -13,3 +13,6 @@ __pycache__/
 .idea/
 .vscode/
 *.swp
+
+# Microsoft Office temporary files
+~$*
