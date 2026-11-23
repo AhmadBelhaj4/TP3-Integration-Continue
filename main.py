@@ -1,29 +1,35 @@
+"""Module principal de l'application FastAPI pour le TP3 DevOps."""
+
+import socket
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-import socket
 
 app = FastAPI(title="TP2 FastAPI App")
 
 
 @app.get("/")
 def read_root():
+    """Point d'entree racine de l'API."""
     return {"message": "it works !"}
 
 
-def get_ip_address():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+def get_ip_address() -> str:
+    """Recupere l'adresse IP locale de la machine."""
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.settimeout(0.5)
     try:
-        s.connect(("8.8.8.8", 80))
-        ip = s.getsockname()[0]
-    except Exception:
-        ip = "127.0.0.1"
+        sock.connect(("8.8.8.8", 80))
+        ip_addr = sock.getsockname()[0]
+    except OSError:
+        ip_addr = "127.0.0.1"
     finally:
-        s.close()
-    return ip
+        sock.close()
+    return ip_addr
 
 
 @app.get("/greeting")
 def greeting(name: str):
+    """Salue l'utilisateur et renvoie les informations reseau."""
     return {
         "message": f"Hello, {name}",
         "developer": "Dev2",
@@ -34,19 +40,31 @@ def greeting(name: str):
 
 @app.get("/addition")
 def addition(a: int, b: int):
+    """Additionne deux entiers."""
     return {
         "result a+b": a + b,
         "developer": "Dev1"
     }
 
 
+@app.get("/soustraction")
+def soustraction(a: int, b: int):
+    """Calcule la difference entre deux entiers."""
+    return {
+        "result": a - b,
+        "developer": "Dev1"
+    }
+
+
 class OperationInput(BaseModel):
+    """Modele de donnees pour les operations a deux operandes."""
     a: float
     b: float
 
 
 @app.post("/multiply")
 def multiply(data: OperationInput):
+    """Multiplie deux nombres reels."""
     return {
         "result": data.a * data.b,
         "developer": "Dev1"
@@ -55,6 +73,7 @@ def multiply(data: OperationInput):
 
 @app.post("/divide")
 def divide(data: OperationInput):
+    """Divise le premier nombre par le second avec verification de division par zero."""
     if data.b == 0:
         raise HTTPException(
             status_code=400,
@@ -71,17 +90,19 @@ items_db = {
     2: "Base de donnees",
     3: "Routeur"
 }
-@app.delete("/remove/{id}")
-def remove_item(id: int):
-    if id not in items_db:
+
+
+@app.delete("/remove/{item_id}")
+def remove_item(item_id: int):
+    """Supprime un element de la base de donnees par son identifiant."""
+    if item_id not in items_db:
         raise HTTPException(
             status_code=404,
             detail="Element non trouve"
         )
 
-    deleted = items_db.pop(id)
-
+    deleted = items_db.pop(item_id)
     return {
-        "message": f"Element {id} ({deleted}) supprime",
+        "message": f"Element {item_id} ({deleted}) supprime",
         "developer": "Dev1"
     }
