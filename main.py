@@ -16,6 +16,7 @@ def read_root():
 def get_ip_address() -> str:
     """Recupere l'adresse IP locale de la machine."""
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.settimeout(0.5)
     try:
         sock.connect(("8.8.8.8", 80))
         ip_addr = sock.getsockname()[0]
