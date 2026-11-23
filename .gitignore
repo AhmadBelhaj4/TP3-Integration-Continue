@@ -9,6 +9,13 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Pytest & Coverage
+.pytest_cache/
+.coverage
+coverage.xml
+report.xml
+htmlcov/
+
 # IDE files
 .idea/
 .vscode/
@@ -16,3 +23,6 @@ __pycache__/
 
 # Microsoft Office temporary files
 ~$*
+~*
+*.tmp
+

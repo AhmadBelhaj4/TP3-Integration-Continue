@@ -1,71 +1,32 @@
-# TP 2 : Application FastAPI Collaborative (DevOps)
+# TP3 - Intégration Continue (CI) avec GitHub Actions
 
-Application de référence développée avec **FastAPI** dans le cadre du **TP 2 : Travail collaboratif avec GitLab**.
+Ce projet étend l'API FastAPI du TP2 en implémentant un pipeline d'Intégration Continue automatisé.
 
----
+## Nouvelles fonctionnalités
+- Ajout de l'endpoint de soustraction (`GET /soustraction`).
+- Mise en place d'une suite de tests unitaires automatisés avec `pytest`.
+- Mesure et validation de la couverture de code avec `pytest-cov` (seuil > 90%).
+- Contrôle strict de la qualité du code avec `pylint` (score cible 10/10).
 
-## 🛠️ Installation
+## Commandes de test en local
 
-1. **Cloner le projet** :
-   ```bash
-   git clone https://gitlab.com/bellajmohsen7/tp2-fastapi-team.git
-   cd tp2-fastapi-team
-   ```
-
-2. **Créer et activer l'environnement virtuel** :
-   - Sous Windows (PowerShell) :
-     ```powershell
-     py -m venv .venv
-     .venv\Scripts\activate
-     ```
-   - Sous Linux / macOS :
-     ```bash
-     python3 -m venv .venv
-     source .venv/bin/activate
-     ```
-
-3. **Installer les dépendances** :
-   ```bash
-   pip install -r requirements.txt
-   ```
-
----
-
-## 🚀 Commande pour lancer l'application
-
-Pour lancer l'application en mode développement avec rechargement automatique à chaud :
-
-```bash
-uvicorn main:app --reload
+### 1. Qualité du code
+```powershell
+pylint main.py --fail-under=10
 ```
-*(ou si uvicorn n'est pas dans le PATH global : `python -m uvicorn main:app --reload`)*
 
-Le serveur démarre sur le port 8000 : **http://localhost:8000** (ou http://127.0.0.1:8000).
+### 2. Tests unitaires et rapport JUnit
+```powershell
+pytest -v --junitxml=report.xml
+```
 
----
+### 3. Couverture de code
+```powershell
+pytest -v test_main.py --cov=main --cov-report=term-missing --cov-report=xml:coverage.xml --cov-report=html --cov-fail-under=90
+```
 
-## 🧪 Comment tester l'application
-
-### 1. Test direct dans le navigateur
-- Ouvrez : [http://localhost:8000/](http://localhost:8000/)  
-- **Réponse attendue** :
-  ```json
-  {
-    "message": "it works !"
-  }
-  ```
-
-### 2. Documentation interactive Swagger UI
-FastAPI génère automatiquement la documentation interactive :
-- Accédez à : [http://localhost:8000/docs](http://localhost:8000/docs)
-- Cliquez sur l'endpoint `GET /` $\rightarrow$ **Try it out** $\rightarrow$ **Execute** pour tester la requête.
-
-### 3. En ligne de commande
-- Avec `curl` :
-  ```bash
-  curl http://localhost:8000/
-  ```
-- Avec PowerShell :
-  ```powershell
-  Invoke-RestMethod http://localhost:8000/
-  ```
+## Pipeline d'Intégration Continue (GitHub Actions)
+Le pipeline défini dans `.github/workflows/ci.yml` s'exécute à chaque push et Pull Request :
+1. **pylint** : Vérifie la syntaxe et les standards de code (score 10/10 obligatoire).
+2. **run-test** : Exécute les tests unitaires et produit l'artefact `junit-test-report`.
+3. **calculate-coverage** : Valide que la couverture dépasse 90% et téléverse les artefacts HTML et XML.
